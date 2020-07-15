@@ -5,7 +5,7 @@ import ApolloClient,{gql} from 'apollo-boost'
 
 
 const client = new ApolloClient({
-    uri:"https://f45235db40c9.ngrok.io/graphql"
+    uri:"https://8b8429f2d295.ngrok.io/graphql"
 })
 
 

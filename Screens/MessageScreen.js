@@ -10,7 +10,7 @@ import Message from '../components/Message'
 
 export default function MessageScreen({route,navigation}) {
 
-    const {username} = useSelector(state => ({
+    const {username,name} = useSelector(state => ({
         ...state.auth
     }))
     const {friendList} = useSelector(state => ({
@@ -32,7 +32,7 @@ export default function MessageScreen({route,navigation}) {
         //dispatch(addMessageToState({friend:route.params.username,text,from:username,name:route.params.name}))
         incr(key+1)
         // console.log('sending message',text,socRef.current.id)
-        socRef.current.emit('send message',{text,to:route.params.username,from:username,name:route.params.name})
+        socRef.current.emit('send message',{text,to:route.params.username,from:username,name:name})
     }
 
     const recieveMessage = ({text,from}) => {
@@ -52,21 +52,20 @@ export default function MessageScreen({route,navigation}) {
         socRef.current.on('message',({text,from}) => {
             // console.log('recieving message',text,from)
             if(text.length > 0)
-            recieveMessage({text,from})
+            if(navigation.isFocused()){
+                console.log('getting message from messaage screen')
+                recieveMessage({text,from})
+            }
         })
-        return () => {
-            dispatch(setMessages({friend:route.params.username,name:route.params.name,msgs:msgs}))
-        }
     },[])
 
-    // useEffect(() => {
-    //     return () => {
-    //         dispatch(setMessages({friend:route.params.username,name:route.params.name,msgs:msgs}))
-    //     }
-    // },[])
     useEffect(() => {
-        //get the messages here 
-    },[friendList])
+        return () => {
+            console.log('updating state with',msgs)
+            if(msgs.length > 0)
+                dispatch(setMessages({friend:route.params.username,name:route.params.name,msgs:msgs}))
+        }
+    },[msgs])
 
 
     return(

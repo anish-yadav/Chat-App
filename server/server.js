@@ -43,7 +43,8 @@ io.on('connection',socket => {
             online.push({username,socID:socket.id})
         else
             online[index] = {username,socID:socket.id}
-        socket.emit('online users' , {online})
+        socket.broadcast.emit('online users' , {online})
+        io.emit('online users' , {online})
     })
     
     // socket.on('send message',({text,from}) => {

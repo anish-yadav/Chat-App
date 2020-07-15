@@ -1,4 +1,4 @@
-import React,{useEffect,useRef} from 'react'
+import React,{useEffect,useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {View,Text,Image,StyleSheet,FlatList,TouchableOpacity, Dimensions} from 'react-native'
 import io from 'socket.io-client'
@@ -22,18 +22,24 @@ export default function HomeScreen({navigation}) {
     const {friendList} = useSelector(state => ({
         ...state.user
     }))
+    const [onlineUsers,setOnline] = useState([])
     const dispatch = useDispatch()
     const socRef = useRef(null)
 
     useEffect(() => {
-        socRef.current = io("https://f45235db40c9.ngrok.io")
+        socRef.current = io("https://0e978c046ada.ngrok.io")
         socRef.current.emit('online',{username,id:socRef.current.id})
         socRef.current.on('online users',({online}) => {
             console.log('online users are',online)
+            setOnline(online)
         })
 
         socRef.current.on('message',({text,from,timestamp,name}) => {
-            dispatch(recieveMessage({text,from,timestamp,name}))
+            if(navigation.isFocused()){
+                console.log('getting message from home screen')
+                dispatch(recieveMessage({text,from,timestamp,name}))
+            }
+            
         })
     },[])  
     
@@ -57,6 +63,7 @@ export default function HomeScreen({navigation}) {
                 username={item.username}
                 img={item.img} 
                 unread={item.unread} 
+                online={onlineUsers.findIndex(user => user.username == item.username) >= 0?true:false}
                 lastMessage={item.messages && item.messages[item.messages.length -1 ] ? item.messages[item.messages.length - 1].text : ""} />
                 )} 
 

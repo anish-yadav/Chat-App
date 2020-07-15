@@ -24,6 +24,7 @@ import MessageScreen from './Screens/MessageScreen'
 import ProfileScreen from './Screens/ProfileScreen'
 import SettingsScreen from './Screens/SettingsScreen'
 import AllUsersScreen from './Screens/AllUsersScreen'
+import AudioCallScreen from './Screens/AudioCallScreen'
 
 const Tabs = createBottomTabNavigator()
 const Stack = createStackNavigator()
@@ -40,7 +41,7 @@ const client = new ApolloClient({
       if (networkError) console.log(`[Network error]: ${networkError}`);
     }),
     new HttpLink({
-      uri: 'https://f45235db40c9.ngrok.io/graphql',
+      uri: 'https://8b8429f2d295.ngrok.io/graphql',
       credentials: 'cross-origin'
     })
   ]),
@@ -69,11 +70,18 @@ const MyStack = () => (
     options={({ route,navigation }) => ({
        title: route.params.name ,
        username : route.params.username,
+       socRef:route.params.socRef,
        headerTitle:props => <HeaderCenter name={route.params.name} img={route.params.img} />,
-       headerLeft:params => <HeaderLeft {...params} navigation={navigation} img={route.params.img} />,
-       headerRight : params => <HeaderRight {...params} />
+       headerLeft:props => <HeaderLeft  navigation={navigation} img={route.params.img} />,
+       headerRight : props => <HeaderRight navigation={navigation} name={route.params.name} img={route.params.img}   />
        })}/>
        <Stack.Screen component={AllUsersScreen} name="All" />
+       <Stack.Screen component={AudioCallScreen} name="AudioCall" 
+       options={({route,navigation}) => ({
+          headerShown:false,
+          name : route.params.name,
+          img:route.params.img
+       })} />
   </Stack.Navigator>
 )
 
